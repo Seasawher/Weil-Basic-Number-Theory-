@@ -1,1 +1,2 @@
-# Weil-Basic-Number-Theory-
+# なにこれ
+Weil「Basic Number Theory」のノートです。
