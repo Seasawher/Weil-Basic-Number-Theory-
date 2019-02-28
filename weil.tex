@@ -1,0 +1,904 @@
+\documentclass[12pt]{jsarticle}%文字サイズが12ptのjsarticle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  パッケージ                                        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%使用しないときはコメントアウトしてください
+\usepackage{amsthm}%定理環境
+\usepackage{framed}%文章を箱で囲う
+\usepackage{amsmath,amssymb}%数式全般
+\usepackage[dvipdfmx]{graphicx}%図の挿入
+%\usepackage{tikz}%描画
+\usepackage{titlesec}%見出しの見た目を編集できる
+\usepackage[dvipdfmx, usenames]{color}%色をつける
+\usepackage{tikz-cd}%可換図式
+\usepackage{mathtools}%数式関連
+\usepackage{amsfonts}%数式のフォント
+\usepackage[all]{xy}%可換図式
+\usepackage{mathrsfs}%花文字
+%\usepackage{comment}%コメント環境
+\usepackage{picture}%お絵かき
+\usepackage{url}%URLを出力
+\usepackage[dvipdfmx]{hyperref}
+\usepackage{pxjahyper}%日本語しおりの文字化けを防ぐ
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  表紙                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\def\thickhrulefill{\leavevmode \leaders \hrule height 1pt\hfill \kern \z@}
+\renewcommand{\maketitle}{\begin{titlepage}%
+    \let\footnotesize\small
+    \let\footnoterule\relax
+    \parindent \z@
+    \reset@font
+    \null\vfil
+    \begin{flushleft}
+      \huge \@title
+    \end{flushleft}
+    \par
+    \hrule height 4pt
+    \par
+    \begin{flushright}
+      \LARGE \@author \par
+    \end{flushright}
+    \vskip 60\p@
+    \vfil\null
+    \begin{flushright}
+        {\small \@date}%
+    \end{flushright}
+  \end{titlepage}%
+  \setcounter{footnote}{0}%
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  左側に線を引く　　                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%leftbar環境の定義
+\makeatletter
+\renewenvironment{leftbar}{%
+%  \def\FrameCommand{\vrule width 3pt \hspace{10pt}}%  デフォルトの線の太さは3pt
+  \renewcommand\FrameCommand{\vrule width 1pt \hspace{10pt}}%
+  \MakeFramed {\advance\hsize-\width \FrameRestore}}%
+ {\endMakeFramed}
+
+\newcommand{\barquo}[1]{\begin{leftbar} \begin{quo} #1 \end{quo} \end{leftbar}}%線つき引用
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  青線太字にする　　                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\textblue}[1]{\textcolor{blue}{\textbf{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  セクション・見出し                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bfsubsection}[1]{\subsection*{\textbf{#1}}}
+\newcommand{\bfsection}[1]{\section*{\textbf{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  sectionの修飾                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\titleformat{\section}[block]
+{}{}{0pt}
+{
+  \colorbox{black}{\begin{picture}(0,10)\end{picture}}
+  \hspace{0pt}
+  \normalfont \Large\bfseries
+  \hspace{-4pt}
+}
+[
+\begin{picture}(100,0)
+  \put(3,18){\color{black}\line(1,0){300}}
+\end{picture}
+\\
+\vspace{-30pt}
+]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  番号付き定理環境                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%注：defというコマンドはもうあります
+\theoremstyle{definition}%定理環境のアルファベットを斜体にしない
+\renewcommand{\proofname}{\textgt{証明}}%proof環境の修正
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  番号なし定理環境                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtheorem*{lemma}{補題}
+\newtheorem*{proposition}{命題}
+\newcommand{\lem}[1]{\begin{oframed} \begin{lemma} #1 \end{lemma} \end{oframed}}%箱付きほだい
+\newcommand{\prop}[1]{\begin{oframed} \begin{proposition} #1 \end{proposition} \end{oframed}}%箱付きめいだい
+
+\newtheorem*{claim}{主張}
+\newtheorem*{sol}{解答}
+\newtheorem*{prob}{問題}
+\newtheorem*{rem}{注意}
+\newtheorem*{quo}{引用}
+\newtheorem*{cor}{系}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  よく使う記号の略記                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\setmid}[2]{\left\{ #1 \mathrel{} \middle| \mathrel{} #2 \right\}}%集合の内包記法
+\newcommand{\abs}[1]{\left \lvert #1 \right \rvert}%絶対値
+\newcommand{\norm}[1]{\left \lVert #1 \right \rVert}%ノルム
+\newcommand{\transpose}[1]{\, {\vphantom{#1}}^t\!{#1}}%行列の転置
+\newcommand{\I}{\sqrt{-1}}%虚数単位。\iは既にある。
+\newcommand{\f}[2]{\frac{#1}{#2}}%分数
+\newcommand{\kakko}[1]{ \langle #1  \rangle}%鋭角かっこ%\angleはもうある
+\newcommand{\single}{\{ 0 \}}%０のシングルトン
+\newcommand{\clsub}{\subset_{\text{closed}}}%閉部分集合
+\newcommand{\opsub}{\subset_{\text{open}}}%開部分集合
+\newcommand{\clirr}{\subset_{\text{closed irr}}}%閉既約部分集合
+\newcommand{\wt}[1]{\widetilde{#1}}%わいどちるだあ
+\newcommand{\To}{\Rightarrow}%ならば
+\newcommand{\ol}[1]{\overline{#1}}%オーバーライン
+\newcommand{\st}{\; \; \text{s.t.} \; \;}%空白付きsuch that
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  log型演算子                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\rank}{{\operatorname{rk}}}
+\newcommand{\re}{{\operatorname {Re}}}
+\newcommand{\gal}{{\operatorname{Gal}}}
+\newcommand{\Hom}{{\operatorname{Hom}}}%homはもうある
+%\newcommand{\ind}{{\operatorname {Ind}}}
+\newcommand{\tr}{{\operatorname {Trace}}}
+%\newcommand{\map}{{\operatorname {Map}}}
+\newcommand{\Aut}{{\operatorname{Aut}}}
+\DeclareMathOperator{\ord}{ord}
+\DeclareMathOperator{\module}{mod}%modはもうある
+\DeclareMathOperator{\Int}{Int}
+\DeclareMathOperator{\height}{height}%htはもうある
+\DeclareMathOperator{\im}{Im}%イメージ、像。Abel圏での対象。
+\DeclareMathOperator{\trdeg}{tr\text{.}deg}%超越次数
+\DeclareMathOperator{\Frac}{Frac}%商体をとる操作
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  黒板太字(blackboard bold)                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\bba}{{\mathbb A}}
+\newcommand{\bbb}{{\mathbb B}}
+\newcommand{\bbc}{{\mathbb C}}
+\newcommand{\bbd}{{\mathbb D}}
+\newcommand{\bbe}{{\mathbb E}}
+\newcommand{\bbf}{{\mathbb F}}
+\newcommand{\bbg}{{\mathbb G}}
+\newcommand{\bbh}{{\mathbb H}}
+\newcommand{\bbi}{{\mathbb I}}
+\newcommand{\bbj}{{\mathbb J}}
+\newcommand{\bbk}{{\mathbb K}}
+\newcommand{\bbl}{{\mathbb L}}
+\newcommand{\bbm}{{\mathbb M}}
+\newcommand{\bbn}{{\mathbb N}}
+\newcommand{\bbo}{{\mathbb O}}
+\newcommand{\bbp}{{\mathbb P}}
+\newcommand{\bbq}{{\mathbb Q}}
+\newcommand{\bbr}{{\mathbb R}}
+\newcommand{\bbs}{{\mathbb S}}
+\newcommand{\bbt}{{\mathbb T}}
+\newcommand{\bbu}{{\mathbb U}}
+\newcommand{\bbv}{{\mathbb V}}
+\newcommand{\bbw}{{\mathbb W}}
+\newcommand{\bbx}{{\mathbb X}}
+\newcommand{\bby}{{\mathbb Y}}
+\newcommand{\bbz}{{\mathbb Z}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  よく使う黒板太字                                  %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\N}{\bbn}
+\newcommand{\Z}{\bbz}
+\newcommand{\Q}{\bbq}
+\newcommand{\R}{\bbr}
+\newcommand{\C}{\bbc}
+\newcommand{\F}{\bbf}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  ギリシャ文字(Greek letters)小文字        　        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%コマンドが5字以上のもの
+\newcommand{\gra}{{\alpha}}
+\newcommand{\grg}{{\gamma}}
+\newcommand{\grd}{{\delta}}
+\newcommand{\gre}{{\epsilon}}
+\newcommand{\grt}{{\theta}}
+\newcommand{\grk}{{\kappa}}
+\newcommand{\grl}{{\lambda}}
+\newcommand{\grs}{{\sigma}}
+\newcommand{\gru}{{\upsilon}}
+\newcommand{\gro}{{\omega}}
+
+\newcommand{\ve}{{\varepsilon}}
+\newcommand{\vp}{{\varphi}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  ギリシャ文字(Greek letters)大文字                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%コマンドが5字以上のもの
+\newcommand{\grG}{{\Gamma}}
+\newcommand{\grD}{{\Delta}}
+\newcommand{\grT}{{\Theta}}
+\newcommand{\grL}{{\Lambda}}
+\newcommand{\grS}{{\Sigma}}
+\newcommand{\grU}{{\Upsilon}}
+\newcommand{\grO}{{\Omega}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  フラクトゥール　　                                %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\fraka}{\mathfrak{a}}
+\newcommand{\frakm}{\mathfrak{m}}
+\newcommand{\frakp}{\mathfrak{p}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%  カリグラフィー  　　　　　                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\cala}{\mathcal{A}}
+\newcommand{\calb}{\mathcal{B}}
+\newcommand{\calc}{\mathcal{C}}
+\newcommand{\cald}{\mathcal{D}}
+\newcommand{\calf}{\mathcal{F}}
+\newcommand{\calo}{\mathcal{O}}
+
+\begin{document}
+
+\title{Andre Weil「Basic Number Theory」}
+\author{\url{https://seasawher.hatenablog.com/} \\ @seasawher}
+\date{\today}
+\maketitle
+
+
+
+
+\bfsection{Chapter I-1. Finite Fields}
+
+\bfsubsection{Theorem 1}
+\barquo{
+each factor in the product $p(q) = \prod (q - \zeta)$ has an absolute value $> q-1$
+}
+\begin{rem}
+  背理法の仮定$n > 1$はここで使う。
+\end{rem}
+
+
+
+
+\bfsubsection{Lemma 1}
+\barquo{
+there is a prime $p$ and power $q = p^{\nu}$ of $p$ such that $q$ divides $n$ and not $N$. Then one verifies at once that the order of $\alpha \beta^{\frac{n}{q}}$ is the l.c.m of $N$ and $q$
+}
+
+\begin{rem}
+有限生成Abel群の基本定理を使う手もあるが、ここでは本文通り示す。次を示せばよい。
+\end{rem}
+\prop{
+$G$は有限Abel群とする。$G$の元のうち最大の位数をもつものを$\alpha$とし、その位数を$N$とする。任意に$\beta \in G$をとり、$\beta$の位数を$n$とする。このとき、$n$は$N$を割り切る。
+}
+
+\begin{proof}
+背理法による。$n$が$N$を割らないと仮定しよう。このとき、ある素数$p$が存在して
+\[
+\ord_p n > \ord_p N
+\]
+が成り立つ。そこで$q = p^{\ord_p n}$とおき、$\alpha \beta^{\frac{n}{q}}$の位数を$s$、$N$と$q$の最小公倍数を$l$とおく。$(\alpha \beta^{\frac{n}{q}})^l = 1$なので、$s$が$l$を割り切ることはあきらかである。
+
+逆に、$(\alpha \beta^{\frac{n}{q}})^s=1$より、
+\[
+\alpha^s = \beta^{-\frac{ns}{q} }
+\]
+である。両辺の位数を考えて
+\[
+\frac{N}{\gcd(s,N)} = \frac{n}{\gcd(\frac{ns}{q},n)} = \frac{q}{\gcd(s,q)}
+\]
+である。ゆえに
+\[
+\ord_p n - \ord_p N = \min\{ \ord_p s , \ord_p n\} - \min\{ \ord_p s, \ord_p N\}
+\]
+が成り立つ。$s$のオーダー$\ord_p s$については
+\begin{description}
+  \item[(1)]$\ord_p s \leq \ord_p N$
+  \item[(2)]$\ord_p N < \ord_p s < \ord_p n$
+  \item[(3)]$\ord_p n \leq \ord_p s$
+\end{description}
+の三つの可能性がある。(1)は上の式の右辺が0になって矛盾。(2)は$\ord_p s = \ord_p n$を導くので矛盾。したがって(3)が成り立ち、$q$は$s$を割り切る。そうすると$\alpha^s = \beta^{-\frac{ns}{q} }=1$より、$N$は$s$を割り切る。したがって最小公倍数の定義から、$l$は$s$を割ることがわかり、$s = l$が言えた。$l$は$N$よりも大きいので、これは$N$の取り方に矛盾する。
+\end{proof}
+
+
+\newpage
+\bfsection{Chapter I-2. The module in a locally compact field}
+Haar測度の定義および基本的性質が[FANF]\cite{FANF}に載っている。参照のこと。
+
+
+\bfsubsection{Lemma 2 直前}
+\barquo{
+If $G$ is discrete or compact, the first formula (applied to $X = \{0 \}$, $X=G$, respectively) shows that the module is 1.}
+
+\begin{rem}
+Haar測度は相対コンパクト集合の上で有限であり、空でない開集合の上で正の値をとる（[FANF]\cite{FANF}命題1-7）ことを用いる。
+\end{rem}
+
+
+\bfsubsection{Lemma 2}
+\barquo{
+Let $G'$ be a closed subgroup of $G$, and $\lambda$ an automorphism of $G$ which induces on $G'$ an automorphism $\lambda'$ of $G'$. Put $G'' = G/G'$, and call $\lambda''$ the automorphism of $G''$ determined by $\lambda$ modulo $G'$.}
+
+\begin{rem}
+$G$はAbel群なので$G/G'$がふたたび群になり、商位相に関して演算は連続になる。$G/G'$がHausdorff空間になることは、$G'$が閉部分群であることから[FANF]\cite{FANF}命題1-4により従う。
+\end{rem}
+
+
+\bfsubsection{Lemma 2}
+\barquo{
+In fact, it is well-known that one can choose Haar measures $\alpha, \alpha', \alpha''$ on $G,G',G''$ so as to have, for every continuous function $f$ with compact support on $G$:
+\[
+\int_{G}f(x)d\alpha x =\int_{G''} \left(\int_{G'}f(x+y)d\alpha'(y) \right)d\alpha''(\dot{x})
+\]
+here $\dot{x}$ denotes the image of $x$ in $G''$}
+
+\begin{rem}
+\textblue{わからない。}セミナーでは示さずに認めた。
+\end{rem}
+
+\bfsubsection{Proposition 1}
+\barquo{
+let $W$ be a neighborhood of a such that $WX \subset U$.}
+\begin{rem}
+後で使うことがあるので、次の補題の形で示す。なお、開近傍補題という名前は僕が勝手につけたもので、一般的なものではない。
+\end{rem}
+
+
+
+
+\prop{
+\textbf{開近傍補題} \\
+$K$は位相体、$U \subset K$は開集合、$X \subset K$はコンパクト集合で、$aX \subset U$なる$a \in K$があるとする。
+
+このとき、ある$a$の開近傍$W$が存在して$WX \subset U$を満たす。
+}
+
+\begin{proof}
+積$m \colon K \times K \rightarrow K$による$U$の逆像$m^{-1}(U) \subset K \times K$は開集合である。積位相の定義により、
+\[
+\{ a \} \times X \subset m^{-1}(U) = \bigcup_{k \in B}(W_k \times X_k)
+\]
+なる$K$の開集合$W_k$, $X_k$がある。$x \in X$とすれば、$(a,x) \in W_k \times X_k$なる$k$が存在する。この$W_k$, $X_k$を$W_x$, $X_x$と書くことにする。そうすると
+\[
+X \subset \bigcup_{x \in X}X_x
+\]
+であるから、$X$のコンパクト性により有限個の$x_1, \ldots , x_i$が存在して
+\[
+X \subset \bigcup_{1 \leq s \leq i}X_{x_s}
+\]
+が成り立つ。このとき$W = \bigcap_{1 \leq s \leq i}W_{x_s}$とおくと有限個の共通部分であるから$W$は$a$の開近傍になっていて、
+\[
+WX \subset  \bigcap_{1 \leq s \leq i}W_{x_s}　\bigcup_{1 \leq s \leq i}X_{x_s} \subset U
+\]
+となる。
+\end{proof}
+
+
+\bfsubsection{Proposition 1}
+\barquo{
+The function $\module_K$ is continuous on $K$, and $\module_K(ab) = \module_K(a)\module_K(b)$ for all $a\in K $, $b \in K$.
+}
+\begin{rem}
+  次のことが系として従うことに注意する。
+\end{rem}
+
+\prop{
+  $K$を、離散的でない局所コンパクト(Hausdorff)位相体とする。このとき$K$は第一可算である。とくに、$K$の位相は点列により特徴づけられる。
+}
+
+\begin{proof}
+$0 \in K$のあるコンパクト近傍$V$をとり固定する。そして$m \in \N$に対し$u_m = B_{\frac{1}{m}} \cap V$とする。$\module_K$の連続性により$B_{\frac{1}{m}} \subset K$は閉集合なので、各$u_m$はコンパクトである。このとき、$\{ u_m \}_{m \in \N}$が$0$の基本近傍系であることを示そう。
+
+いま$0 \in K$の開近傍$W$が任意に与えられたとする。このとき
+\[
+\bigcap_{m=1}^{\infty} (u_m \setminus W) = \emptyset
+\]
+である。一方で$u_m \setminus W \subset V$は閉集合であり、$V$はコンパクトであるので、集合族$\{ u_m \setminus W \}_{m \in \N}$は有限交叉性を持たない。したがって、ある$N \in \N$が存在して
+\[
+\bigcap_{m=1}^{N} (u_m \setminus W) = u_N \setminus W = \emptyset
+\]
+である。すなわち、$u_N \subset W$がいえた。
+
+\end{proof}
+
+
+
+
+\bfsubsection{Proposition 2}
+\barquo{
+let $W$ be a neighborhood of $0$ such that $WV \subset V$.
+}
+\begin{proof}
+  Intで集合の内部を表すことにする。$V$は0の近傍なので$0 \cdot V = \{0 \} \subset \Int V$であり、開近傍補題から
+  \[
+  WV \subset \Int V \subset V
+  \]
+  なる0の開近傍$W$がある。
+\end{proof}
+
+
+\bfsubsection{Proposition 2}
+\barquo{
+As it is contained in the compact set $V$, it has the limit $0$.
+}
+\begin{proof}
+  帰納的に、$\forall n \ r^n \in V$であることに注意する。$V$における0の開近傍$A$が与えられたとする。$A^c = V \setminus A$は$V$の閉集合なのでコンパクト。よって$\module_K$の連続性により、$\module_K(A^c) \subset \R$はコンパクト、とくに閉である。したがって
+  \[
+  0 < a < \inf_{x \in A^c}\module_K(x)
+  \]
+  なる実数$a \in \R$がある。このとき$V \cap B_a \subset A$である。ゆえに、$V$において$\{V \cap B_m \}_{m > 0}$は0の基本近傍系をなす。したがって、$r^n \rightarrow 0$である。
+\end{proof}
+
+
+
+\bfsubsection{Proposition 2}
+\barquo{
+Call $X$ the closure of $V - (rV)$; clearly $X$ is compact, and $0$ is not in $X$;
+}
+\begin{proof}
+  $X = \overline{V \setminus rV} = \overline{V \cap (rV)^c} \subset V \cap \overline{(rV)^c}$であるから、$X$は$V$の閉集合。よって$X$はコンパクト。$0 \in X$と仮定しよう。すると点列 $\{ x_{n}\} \subset V \setminus rV$であって、$x_{n} \rightarrow 0$であるものがある。このとき
+  \[
+  x_{n} \in V \quad r^{-1}x_{n} \in V^c
+  \]
+  よって積の連続性により$0 = \lim(r^{-1}x_{n}) \in \overline{V^c}$である。ここで$\Int V \subset V$により$V^c \subset (\Int V)^c$だから、$\overline{V^c} \subset (\Int V)^c$となり$0 \in (\Int V)^c$となって矛盾。ゆえに、$X$は0を含まない。
+\end{proof}
+
+
+
+
+\bfsubsection{Corollary 1 of Proposition 2}
+\barquo{The sets $B_m$, for $m > 0$, make up a fundamental sysytem of neighborhoods of $0$ in $K$.
+}
+
+\begin{rem}
+局所コンパクトHausdorff空間において、各点でコンパクトな近傍の全体は基本近傍系をなす([内田]\cite{内田}Thm24.1)ことに注意する。
+\end{rem}
+
+\bfsubsection{Corollary 2 of Proposition 2}
+\barquo{For $a \in K$, $\lim_{n \to +\infty} a^n =0$ if and only if $\module_K(a) < 1$.
+}
+
+\begin{proof}
+$\Rightarrow$は連続性によりあきらか。$\Leftarrow$は、Cor.1より$\{B_m\}$が0の基本近傍系であることを使えばあきらか。
+\end{proof}
+
+
+
+
+\bfsubsection{Corollary 3 of Proposition 2}
+\barquo{ A discrete subfield of $K$ is finite.
+}
+\begin{rem}
+一般に位相空間$X$の部分集合$Y$について、$Y \subset X$が離散部分集合(空間)であるとは、$Y$に$X$の部分集合として相対位相を入れたとき、その位相が$Y$の離散位相であることをいう。このとき$Y \subset X$が閉であるとは限らない。
+
+本文には「Therefore $L$ is a discrete subset of the compact set $B_1$, hence finite」と書いてあるが、一般にコンパクト集合の離散部分集合は有限とは限らない。反例は$I = [0,1]$, $A = \{\frac{1}{n} \mid n \in \Z_{\geq 1} \}$により与えられる。
+
+「コンパクト集合の離散閉部分集合は有限集合」なら正しい。通常、離散部分集合と言われるものは閉でもあることが多いので、本文にはこう書いてあるのだろう。
+\end{rem}
+
+\begin{proof}
+$L$は離散体であるので、$x \in L \setminus \{ 0 \}$について本文にある論法で$\module_K(x) = 1$がいえる。よって$L \subset B_1$である。一般に、(Hausdorff)位相群の局所コンパクト部分群は閉([FANF]\cite{FANF}Prop1.6)なので、$L \subset K$は閉であり、したがって$L$はコンパクト離散集合であることになる。よって$L$は有限集合。
+\end{proof}
+
+\bfsubsection{Theorem 3}
+\barquo{
+Hence there exists a neighborhood $W$ of 0 in $V$, and a neighborhood of 0 in $K$ which we may assume to be of the form $B_{\varepsilon}$ with $\varepsilon > 0$, such that $B_{\varepsilon}W \subset V \setminus f(S)$}
+
+\begin{rem}
+$f(S)$はコンパクトなので、$f(S) \subset V$は閉集合。スカラー倍$K \times V \rightarrow V$は連続なので、$V - f(S)$の逆像は$(0,0)$を含む開集合である。よって積位相の定義により、
+\[
+UW \subset V - f(S)
+\]
+なる0の開近傍$U \subset K$と$W \subset V$とがある。$B_m$は0の基本近傍系なので、示すべきことがいえる。
+\end{rem}
+
+\bfsubsection{Corollary 2 of Theorem 3}
+\barquo{
+If $V$ is a locally compact topological vector-space over $K$, then $V$ has a finite dimension $d$ over $K$, and $\module_V (a)=\module_K(a)^d$ for every $a \in K$.
+}
+
+\begin{rem}　${}$%description環境がズレないようにするための空文字
+  \begin{description}
+    \item[(1)]$\mu$を$K$のHaar測度とするとき、$K^d$の直積測度$\mu^d$もまたHaar測度となることに注意する。本文にはFubini's Theoremとあるが、この部分の意図は不明。示すべき等式は直積測度の定義から従う。
+    \item[(2)]$\module_K\colon K \rightarrow \R$の連続性を示す議論をそのまま繰り返すことにより、$\module_V \colon K \rightarrow \R$の連続性がいえる。これを用いなければ
+    \[
+    \lim_{n \rightarrow \infty} a^n = 0 \ \Rightarrow \  \module_V(a) < 1
+    \]
+    が言えないのにも関わらず、本文には注意がないので注意しておく。
+  \end{description}
+\end{rem}
+
+
+\bfsubsection{Corollary 2 of Theorem 3 直後}
+\barquo{
+Fubini's theorem shows at once that every subspace of $V$ of dimension $n' < n$ is of measure $0$.
+}
+\begin{rem}
+  次を示せばよい。
+\end{rem}
+\prop{
+$K$は離散的でない局所コンパクト位相体であるとする。$n \geq 1$は自然数、$V$はn次元左位相ベクトル空間。とくに$V$は局所コンパクトである。このとき次が成り立つ。
+\begin{description}
+  \item[(1)]  $n' < n$なる$n' \in \Z$について、$V$の$n'$次元部分空間の$V$上の測度は0
+  \item[(2)] $K$-線形写像$A \colon V \rightarrow V$について$\module_V A$を定義できる。$A$が同型(つまり同相)なら既に述べられたように定め、$A$が同型でなければ(送った先がゼロ集合なので)$\module_V A=0$で定める。
+\end{description}
+}
+
+\begin{proof}
+(1)があきらかでないと感じるかもしれない。(1)を示すには、積測度の定義により、$K$上のHaar測度$\alpha$に対して$\alpha(\{ 0 \})=0$を示せばよい。
+
+$0 < \module_K (r) < 1$なる$r \in K$をとる。$B(n)=r^nB_1$とおくと
+\begin{gather*}
+\alpha(B(n))=\alpha(r^nB_1)=\module_K (r)^n \alpha(B_1) \\
+B(n)=B_{\module_K (r)^n} \subset B(n-1) \subset \cdots \subset B(0)=B_1
+\end{gather*}
+が成り立つ。つまり、$B(n)$は下降列であり、共通部分の測度は0である。ゆえに$\alpha(B_1) < \infty$により、[伊藤]\cite{伊藤}Thm6.2から
+\[
+\alpha(\{ 0 \})=\alpha(\bigcap_{n \geq 1} B(n))= \inf_{n \geq 1}\alpha(B(n))=0
+\]
+がいえた。
+\end{proof}
+
+
+\bfsubsection{Corollary 3 of Theorem 3}
+\barquo{
+for types (b) and (c), it follows from a straightforward application of Fubini's theorem, just as in classical analysis (where one proves the theorem for the case $K = \R$)
+}
+\begin{rem}
+$(c)$のケースだけ証明する。座標の入れ替え行列を適当に掛けることにより、$A$は2次行列と単位元の直和だと思うことができるので、$A$を2次行列だとしても一般性を失わない。そこである$c \in K$があり
+\[
+A = \begin{pmatrix} 1 & c \\ 0 & 1 \end{pmatrix}
+\]
+であると仮定する。
+あるコンパクト集合$X \subset K$をとる。このとき
+\begin{align*}
+  \mu^{\otimes 2} (A(X^2)) &= \int_{K^2} 1_{A(X^2)} (x,y) \, d\mu \otimes \mu (x,y) \\
+  \intertext{Fubiniの定理により}
+  &= \int_K \int_K 1_{A(X^2)} (x,y) \, d\mu(x) \, d\mu(y) \\
+  &= \int_K \mu\{ x \in K \mid (x,y) \in A(X^2) \}  \, d\mu(y) \\
+  &= \int_K \mu\{ x \in K \mid x = s + ct , \, y =t \quad s,t \in X \}  \, d\mu(y) \\
+  &=\int_X \mu\{ s + cy \mid s \in X \} \, d\mu(y) \\
+  \intertext{Haar測度の不変性により}
+  &= \int_X \mu(X) \, d\mu(y) \\
+  &= \mu^{\otimes 2}(X)
+\end{align*}
+であることから、示したいことが言えた。
+\end{rem}
+
+
+\bfsubsection{Proposition 3}
+\barquo{
+The function $\module_K$ induces on $K^{\times}$ an open homomorphism of $K^{\times} $ onto a closed subgroup $\Gamma$ of $\R_+^{\times}$.
+}
+\begin{rem}
+$\module_K  \colon K^{\times} \rightarrow \R_{>0}$が開写像というのと、$\module_K  \colon K^{\times} \rightarrow \Gamma$が開写像ということは違うので注意すること。(後者が正しい)
+\end{rem}
+
+\begin{proof}
+$\Gamma' = \Gamma \{0 \}$とする。$m>0$をとると、
+\[
+[0,m] \cap \Gamma' = \module_K (B_m)
+\]
+である。$B_m$はコンパクトなので、$[0,m] \cap \Gamma'$もコンパクト。\par
+$\Gamma' \subset \R_{\geq 0}$が閉であることを示そう。点列$\{ a_n \} \subset \Gamma'$と$a \in \R_{\geq 0}$があり、$a_n \rightarrow  a$であったと仮定する。$\{ a_n \}$はCauchy列なので有界であり、${a_n} \subset [0,M]$なる$M>0$が存在する。ゆえに$\{ a_n \} \subset [0,M] \cap \Gamma'$であり、$[0,M] \cap \Gamma'$はコンパクトなので$a \in \Gamma'$でなくてはならない。よって、$\Gamma' \subset \R_{\geq 0}$は閉。\par
+ゆえに$\Gamma = \Gamma' \cap \R_{>0}$より、$\Gamma \subset \R_{>0}$も閉である。いま$U=\ker (\module_K)$により$U \subset K^{\times}$を定める。\par
+$\module_K  \colon K^{\times} \rightarrow \Gamma$が開写像であることを示したいので、$1 \in K^{\times}$の$K^{\times}$における近傍$V$と$V$の$\module_K$による像$V'$に対して、$V'$が1の$\Gamma$における近傍であることをいいたい。背理法による。$1 \notin \Int V'$、つまり$1 \in \overline{\Gamma \setminus V'}$と仮定する。\par
+このとき点列$\{ \gamma_n \} \subset \Gamma \setminus V'$であって、$\gamma_n \rightarrow 1$であるものがある。$\gamma_n \subset \Gamma $なので
+\[
+\gamma_n = \module_K(a_n)
+\]
+なる$a_n \in K^{\times }$が存在する。\par
+$\module_K \subset \R$はCauchy列なので有界であり、したがって$B_m$のコンパクト性により、部分列をとれば$a_{n'} \rightarrow a$なる$a \in K$があるようにできる。$\module_K$の連続性により$\module_K(a)=1$なので$a\in U$である。$UV$は$U$の近傍であるので
+\[
+n \geq N \rightarrow a_n \in UV
+\]
+なる自然数$N$が存在する。したがって
+\[
+n \geq N \rightarrow \gamma_n \in \module_K(V)=V'
+\]
+となり矛盾。よって$1 \in \Int V'$である。
+\end{proof}
+
+\bfsubsection{Theorem 4}
+\barquo{
+If (3) is valid for $A=1$, then the image $\Gamma$ of $K^{\times}$ under $\module_K$ is discrete in $\R_+^{\times}$.
+}
+
+\begin{proof}
+$U = \module_K^{-1}[0,1)$とする。このとき$1+U \subset K^{\times}$であることはあきらか。$\module_K \colon K^{\times} \rightarrow \Gamma$は開写像なので、$\module_K(1+U) \subset \Gamma$は開。したがって、ある$\R$の開集合$V$が存在して
+\[
+\module_K(1+U)= \Gamma \cap V \subset [0,1]
+\]
+が成り立つ。とくに、1を含む$\R$の開区間$I$が存在して
+\[
+\{1 \} \subset \Gamma \cap I \subset [0,1]
+\]
+が成立する。\par
+ここで$\{ 1 \} \subset \Gamma$が開集合でない、つまり任意の1を含む$\R$の開区間$J$に対して、$\{ 1 \} \neq \Gamma \cap J$と仮定する。このとき$1 \in \Gamma$は$\Gamma$の集積点であり、ある$\{ a_n \} \subset K^{\times}$が存在して
+\[
+\module_k(a_n) \neq 1
+\]
+\[
+\module_K(a_n) \rightarrow 1
+\]
+を満たす。このとき各$n$に対して$\module_K(a_n) > 1$または$\module_K(a_n)<1$のいずれかであるが、必要なら$a_n^{-1}$を考えることにより、$\forall n \ \module_K(a_n) > 1$としてよい。\par
+$I$は$1 \in \R$の開近傍なので
+\[
+n \geq N \rightarrow \module_K(a_n) \in I
+\]
+なる$N \in \Z$が存在する。このとき
+\[
+n \geq N \rightarrow \module_K (a_n) \in I \cap \Gamma \subset [0,1]
+\]
+であるので矛盾。よって$\{ 1 \} \subset \Gamma$は開集合であり、任意の$a \in \Gamma$について左からの積$a  \colon \Gamma \rightarrow \Gamma$は同相なので$\Gamma \subset \R$は離散集合。
+\end{proof}
+
+
+
+\newpage
+\bfsection{Chapter I-3. Classification of locally compact fields}
+
+\bfsubsection{Lemma 3}
+\barquo{
+ $f(m^k) = kf(m)$,
+ $f(mn) \leq f(m)+f(n)$,
+ $f(m+n) \leq a + \sup (f(m),f(n))$.
+}
+
+\begin{proof}
+いずれも場合分けすればわかる。
+
+\begin{description}
+  \item[(1)]
+  \begin{align*}
+  f(m^k) &= \begin{cases}
+  0 &(F(m) \leq 1) \\
+  k\log F(m) &(F(m) > 1)
+  \end{cases} \\
+  &=kf(m)
+  \end{align*}
+  \item[(2)]
+  \begin{align*}
+    f(m)+f(n)-f(mn)= \begin{cases}
+  0 &(  1 \leq \min(F(m),F(n)) \ ) \\
+  - \log F(n) &(F(m)^{-1} \leq F(n) \leq 1 \leq F(m) \ ) \\
+  \log F(m) &(F(n) \leq F(m)^{-1} \leq 1 \leq F(m) \ ) \\
+  \mathrm{omitted} \\
+  0 &(\max(F(m),F(n)) \leq 1 )
+  \end{cases}
+  \end{align*}
+  \item[(3)]
+  $F(m) \geq F(n)$としても一般性を失わない。\\
+  \begin{align*}
+    F(m + n) &\leq \sup(0, \log(A F(m))) \\
+    &\leq \sup(0,\log A + \log(F(m))
+  \end{align*}
+  であるから、
+  \begin{align*}
+    f(m+n)-f(m) \leq \begin{cases}
+    \log A &(\max(A^{-1}, 1) \leq F(m) \ ) \\
+    0 &(F(m) \leq \min(A^{-1},1) \ ) \\
+    - \log F(m) &(1 \leq F(m) \leq A^{-1}) \\
+    \log A + \log F(m) &(A^{-1} \leq F(m) \leq 1)
+  \end{cases}
+  \end{align*}
+  が成り立つ。それぞれの場合に$a$で上から抑えられることは明らか。よって示せた。
+\end{description}
+
+\end{proof}
+
+
+\bfsubsection{Lemma 3}
+\barquo{
+In this inequality, replace $m$ by $m^k$, this does not change......Now replace $n$ by $n^k$, for $k \rightarrow +\infty$, we get......}
+
+\begin{rem}
+本文では何故か2回に分けているが、$m$、$n$を同時に$m^k$、$n^k$で置き換えたほうが見通しがよい。
+\end{rem}
+
+\newpage
+\bfsection{Chapter I-4. Structure of p-fields}
+
+\bfsubsection{Theorem 6}
+\barquo{
+Clearly every relatively compact subset of $K$ which is closed under multiplication is contained in $R$;
+}
+\begin{proof}
+  もし$\module$の値が$1$より大きい元を持てば、どんな部分列も収束しないような点列が作れてしまうため、コンパクト性に反する。
+\end{proof}
+
+
+\bfsubsection{Theorem 6}
+\barquo{
+let $\grg$ be the largest element of $\grG$ which is $< 1$, and let $\pi \in K^{\times }$ be such that $\module_K(\pi) = \grg$. Clearly $\grg$ generates $\grG$;
+}
+\begin{proof}
+  背理法で示す。$\beta \in \grG \setminus \kakko{\grg} $とする。必要なら逆数を考えることにより$\beta < 1$と仮定してよい。$\grg$の最大性により$\beta \leq \grg$である。よって$\beta \grg^{-1} \leq 1$となるが、仮定により$\beta \grg^{-1} < 1$である。したがって再び$\beta \grg^{-1} \leq \grg$であることが判る。以下帰納的に、任意の$n$について$\beta \grg^{-n} < 1$
+  となる。これは矛盾。
+\end{proof}
+
+
+\bfsubsection{Theorem 6}
+\barquo{
+as $R$ is compact, $K = R/P$ is finite.
+}
+\begin{rem}
+  次の補題が成り立つことを認めればあきらか。
+\end{rem}
+
+\lem{
+位相群$G$, $H$があり$H \subset G$とする。このとき次は同値。
+\begin{description}
+  \item[(1)] 位相空間$G/H$は離散的
+  \item[(2)] $H \opsub G$
+\end{description}
+}
+\begin{proof}
+
+  [FANF]\cite{FANF} 命題1-4(iv)を参照のこと。
+\end{proof}
+
+
+
+
+\bfsubsection{Corollary 2 of Theorem 6}
+\barquo{
+Let $\xi$ be an element of $P$, other than $0$; put $n = \ord(\xi)$, and let $A$ be a full set of representatives of the classes modulo $P^n$ in $R$. Then, for all $v \in \Z$, every $x \in P^{nv}$ can be expressed in one and only one way in the form
+\[
+x = \sum_{i = v}^{+ \infty} a_i \xi^i
+\]
+with $a_i \in A$ for all $i \geq v$.
+}
+\begin{proof}
+  本文通り$v = 0$としてよい。
+  $x \in R$が与えられたとき、$A$の定義により
+\[
+x \equiv a_0 \quad (\module P^n)
+\]
+なる$a_0 \in A$がある。このとき$(x- a_0)/ \xi \in R$なのでさらに
+\[
+\f{x - a_0}{\xi} \equiv a_1 \quad (\module P^n)
+\]
+なる$a_0 \in A $がある。したがって帰納的に次の式をみたす$A$の元$a_{N+1}$がとれることがわかる。
+  \[
+\frac{x - \sum_{i = 0}^N a_i \xi^i}{\xi^{N+1}} \equiv a_{N+1} \quad (\module  P^n)
+  \]
+  以上により
+  \[
+  x = \sum_{i = v}^{+ \infty} a_i \xi^i
+  \]
+  が成り立つ。
+
+  一意性を示そう。背理法による。すべては同じでない$a_i, b_i \in A$が存在して
+  \[
+  \sum_{i = v}^{+ \infty} a_i \xi^i = \sum_{i = v}^{+ \infty} b_i \xi^i
+  \]
+  が成り立ったとする。このとき
+  \[
+    \sum_{i = v}^{+ \infty} (a_i - b_i) \xi^i = 0
+  \]
+  が成り立つ。いま$a_i - b_i \neq 0$なる最小の$i$を$j$とおく。すると
+  \[
+  a_j - b_j = - \sum_{i > j}^{+ \infty} (a_i - b_i) \xi^{i-j}
+  \]
+  であるが、右辺は$P^n$の元であるのでこれは$A$の定義に反する。よって矛盾。
+
+\end{proof}
+
+
+\bfsubsection{Corollary 4 of Theorem 6}
+\barquo{
+Every automorphism of $K$ (as a topological field) maps $R$ onto $R$, $P$ onto $P$, and has the module 1
+}
+\begin{proof}
+  $f \colon K \to K$を位相体としての同型とする。このとき$f(R) \subset R$であることだけ示せば十分だが、$R$のコンパクト部分環としての最大性からこれはあきらか。
+\end{proof}
+
+
+
+\bfsubsection{Corollary 5 of Theorem 6}
+\barquo{
+and $K'$ a division algebra over $K$.
+}
+\begin{rem}
+  $K'$の$K$上の拡大次数が有限という仮定を付け加える必要があるように思う。
+\end{rem}
+
+
+
+\bfsubsection{Proposition 4}
+\barquo{
+we see that the elements of $R'$ of the form $\sum_{i=0}^{e-1} a_i \pi'^i$, with $a_i \in A$ for $0 \leq i \leq e-1$, make up a full set of representatives $A'$ of the classes modulo $P'$ in $R'$.
+}
+\begin{proof}
+  $x \in R'$が与えられたとする。このとき
+  \[
+  \exists a_i \in A \quad x = \sum_{i=0}^{\infty} a_i \pi'^i
+  \]
+  が成り立つ。したがって$y = \sum_{i=0}^{e-1} a_i \pi'^i \in R'$とおけば$x - y \in P'^e$である。ゆえに、$\setmid{\sum_{i=0}^{e-1} a_i \pi'^i}{a_i \in A}$の写像$R' \to R'/ P'^e$による像は全体ということが判る。
+
+  また、すべては同じでないある$a_i \in A$, $b_i \in A$が存在して
+  \[
+  \sum_{i=0}^{e-1} (a_i- b_i) \pi'^i \in P'^e
+  \]
+  が成り立ったと仮定する。ここで$a_i - b_i \neq 0$が成り立つ最小の$i$を$j$とおくと
+  \[
+  a_j - b_j + \sum_{i > j}^{e-1} (a_i- b_i) \pi'^{i-j} \in P'^{e-j}
+  \]
+  であるので、$A$が$R'/P'$の完全代表系であったことに矛盾。
+\end{proof}
+
+
+\bfsubsection{Proposition 4}
+\barquo{
+This shows that $K' = K(\pi')$, and, for $v=0$, it shows that $R' = R[\pi']$.
+}
+\begin{proof}
+  $R' = R[\pi']$であること: $v=0$の場合についての、本文における直前の議論により
+  \[
+  \forall x \in R' \; \exists (\gra_i) \in R \st x = \sum_{i=0}^{e-1} \gra_i \pi'^i
+  \]
+  がわかるので$R' = R[\pi']$が結論できる。
+
+  $K' =K(\pi')$であること: 商体を考えることにより
+  \[
+  K' = \Frac R' = K(\pi')
+  \]
+  がわかる。
+\end{proof}
+
+
+
+
+\bfsubsection{Corollary 1 of Proposition 4}
+\barquo{
+they have the same module, so that the modular degree of $K$ over $K'$ is $1$.
+}
+\begin{proof}
+  $K'$と$K$は位相体として同型なので、それぞれの最大コンパクト部分環$R'$と$R$も同型である。したがってその剰余体$k'$と$k$も同型であり、ともに有限体だから$\# k' = \# k$である。
+\end{proof}
+
+
+\bfsubsection{Corollary 1 of Proposition 4}
+\barquo{
+the degree of $K$ over $K'$ must be $p$ or $1$.
+}
+\begin{proof}
+  係数環がDVR(離散付置環)なので、アイゼンシュタインの判定法から。
+\end{proof}
+
+
+\bfsubsection{Corollary 1 of Proposition 4}
+\barquo{
+As $\ord_K(\pi) = 1$, $\pi$ is not in $K^p$, so that $K \neq K'$.
+}
+\begin{proof}
+  もし$\pi \in K^p$ならば$\pi = \tau^p$なる$\tau \in K$がある。$(R,P)$を$K$の最大コンパクト部分局所環とすると、このとき$\tau \in P$である。したがって$1 = \ord_K(\pi) = p \ord_K(\tau) \geq p$となり矛盾。
+\end{proof}
+
+
+
+\bfsubsection{Corollary 2 of Proposition 4}
+\barquo{
+it is well-known, and easily proved, that, if $K'$ is purely inseparable of degree $\leq p^n$ over $K$, it must be contained in $K^{p^{-n}}$.
+}
+\begin{proof}
+  $x \in K'$が与えられたとき、$x$の$K$上の最小多項式は$X^{p^m} - a \; (a \in K)$という形である。ここで、次元についての仮定から$m \leq n$であるので、したがってすべての$x \in K'$について$x^{p^n} \in K$である。よって$K' \subset K^{p^{-n}}$がわかる。
+\end{proof}
+
+
+
+\newpage
+\begin{thebibliography}{1}%参考文献のリスト
+  \bibitem{内田} 内田伏一『集合と位相』(裳華房, 1986)
+  \bibitem{FANF} Dinakar Ramakrishnan, Robert J.Valenza『Fourier Analysis on Number Fields』(Springer, 1999)
+  \bibitem{伊藤} 伊藤清三『ルベーグ積分入門』(裳華房, 1963)
+\end{thebibliography}
+
+
+\end{document}
